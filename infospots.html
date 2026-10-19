@@ -113,7 +113,7 @@ ol{padding-left:1.2rem;margin:.3rem 0 0}
 <script>
 // DATOS: lo unico que se edita
 var INFOSPOTS = /*DATA*/;
-var AZ_OFFSET = 0; // si los puntos salen corridos hacia los lados, probar 90, 180 o -90
+var AZ_OFFSET = -90; // ajuste de orientacion: si los puntos aun salen corridos hacia los lados, probar 0, 90 o 180
 // FIN DE LOS DATOS
 var R = 8, mundo = document.getElementById('mundo'), paneles = [];
 function limpiar(t) { return String(t).replace(/[<>"&]/g, ' '); }
@@ -194,7 +194,7 @@ $("go").onclick=function(){
    +"PASO 3. Ayudame a copiar el link que me da Netlify y abrirlo en mi celular.\n"
    +"PASO 4. Explicame cómo probarlo: mirar un punto amarillo fijo durante unos 2 segundos para abrir su texto.\n"
    +"PASO 5. Explicame cómo tocar el ícono de gafas de la pantalla, pasar a modo VR y poner el celular en el visor.\n"
-   +"PASO 6. Si los puntos amarillos no coinciden con los elementos de mi imagen, ayudame a cambiar el valor de AZ_OFFSET (probando 90, 180 o -90) y a volver a subir la carpeta.";
+   +"PASO 6. Si los puntos amarillos no coinciden con los elementos de mi imagen, ayudame a cambiar el valor de AZ_OFFSET (probando 0, 90 o 180) y a volver a subir la carpeta.";
   $("outP").value=p;$("res").style.display="block";
   $("t4").scrollIntoView({behavior:"smooth",block:"start"});
 };
