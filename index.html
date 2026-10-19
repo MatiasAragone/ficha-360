@@ -81,13 +81,7 @@ summary{cursor:pointer;font-weight:700}
 </section>
 
 <section class="card" aria-labelledby="t2">
-  <h2 id="t2">2. ¿Qué querés que haya para señalar después?</h2>
-  <p class="hint" style="margin:0 0 .5rem">En la próxima clase vas a marcar estos elementos con carteles de información. Elegí tres cosas que se puedan ver en distintos lugares de la escena.</p>
-  <div class="three">
-    <div><label for="e1">Elemento 1</label><input id="e1"></div>
-    <div><label for="e2">Elemento 2</label><input id="e2"></div>
-    <div><label for="e3">Elemento 3</label><input id="e3"></div>
-  </div>
+  <h2 id="t2">2. Un último detalle</h2>
   <label for="evitar">¿Algo que NO querés que aparezca? <span class="hint">Opcional.</span></label>
   <input id="evitar">
   <button type="button" class="main" id="go">Armar mi conclusión y mi prompt</button>
@@ -110,6 +104,7 @@ summary{cursor:pointer;font-weight:700}
       <li>Pegá el prompt en Gemini o ChatGPT y pedí la imagen.</li>
       <li>Revisá el resultado: ¿es el doble de ancha que alta? ¿se ven los bordes izquierdo y derecho unidos? ¿cielo y suelo se ven bien?</li>
       <li>La IA no siempre lo logra a la primera. Corregir es parte del trabajo.</li>
+      <li>Probá tu imagen en el <a href="https://renderstuff.com/tools/360-panorama-web-viewer/" target="_blank" rel="noopener" style="color:var(--accent)">visor de Render Stuff</a>.</li>
     </ol>
     <details>
       <summary>Si algo sale mal, probá estos pedidos</summary>
@@ -117,6 +112,7 @@ summary{cursor:pointer;font-weight:700}
       <div class="fix"><strong>Se nota la costura:</strong> “Los bordes izquierdo y derecho no coinciden. Generala de nuevo para que el borde izquierdo continúe sin cortes en el derecho, como una imagen que se repite en bucle horizontal.”</div>
       <div class="fix"><strong>Cielo o suelo raros:</strong> “El cielo y el suelo se ven deformados o vacíos. Agregá detalle natural arriba y abajo y mantené el resto igual.”</div>
     </details>
+    <p style="margin:1rem 0 0"><strong>Cuando tu imagen esté lista y probada,</strong> seguí con la <a href="infospots.html" style="color:var(--accent)">ficha de infospots</a>.</p>
   </section>
 </div>
 </main>
@@ -143,14 +139,12 @@ $("go").onclick=function(){
   if(!lugar){$("msg").textContent="Primero contá qué lugar querés recorrer.";$("lugar").focus();return}
   $("msg").textContent="";
   var nombre=v("nombre"),porque=v("porque"),mo=v("momento"),cl=v("clima"),es=v("estilo"),se=v("sensacion"),evitar=v("evitar");
-  var els=[v("e1"),v("e2"),v("e3")].filter(Boolean);
 
   var c=[];
   c.push((nombre?"Soy "+nombre+". ":"")+"Quiero recorrer en 360°: "+lugar+(/[.!?]$/.test(lugar)?"":"."));
   if(porque)c.push("Lo elegí porque "+porque+(/[.!?]$/.test(porque)?"":"."));
   var d=[];if(mo)d.push("momento: "+mo);if(cl)d.push("clima: "+cl);if(es)d.push("estilo: "+es);if(se)d.push("sensación: "+se);
   if(d.length)c.push("Lo imagino así → "+d.join("; ")+".");
-  if(els.length)c.push("Quiero señalar después: "+lista(els)+".");
   $("outC").value=c.join("\n\n");
 
   var p="Generá una imagen panorámica 360° en proyección equirectangular, con relación de aspecto 2:1 (por ejemplo 4096 × 2048 px), lista para verse en un visor de realidad virtual.\n\n";
@@ -159,8 +153,7 @@ $("go").onclick=function(){
   if(cl)p+="Clima: "+cl+".\n";
   if(es)p+="Estilo visual: "+es+".\n";
   if(se)p+="Sensación que debe transmitir: "+se+".\n";
-  if(els.length)p+="\nElementos que quiero que se vean, repartidos en distintas direcciones alrededor del punto de vista: "+lista(els)+".\n";
-  p+="\nREQUISITOS TÉCNICOS:\n- El punto de vista está en el centro de la escena, a la altura de los ojos de una persona.\n- El horizonte es recto y está justo a la mitad de la altura de la imagen.\n- El borde izquierdo y el borde derecho deben coincidir exactamente, sin costura visible al girar.\n- El cielo (arriba) y el suelo (abajo) tienen detalle natural y sin deformaciones extrañas.\n- La iluminación es coherente en todas las direcciones.\n- Sin texto, sin marcas de agua y sin personas en primer plano"+(evitar?"; además, sin "+evitar:"")+".";
+  p+="\nREQUISITOS TÉCNICOS:\n- El punto de vista está en el centro de la escena, a la altura de los ojos de una persona.\n- El horizonte es recto y está justo a la mitad de la altura de la imagen.\n- El borde izquierdo y el borde derecho deben coincidir exactamente, sin costura visible al girar.\n- El cielo (arriba) y el suelo (abajo) tienen detalle natural y sin deformaciones extrañas.\n- La iluminación es coherente en todas las direcciones.\n- La escena incluye varios elementos distintos y bien reconocibles, repartidos en distintas direcciones alrededor del punto de vista.\n- Sin texto, sin marcas de agua y sin personas en primer plano"+(evitar?"; además, sin "+evitar:"")+".";
   $("outP").value=p;
   $("res").style.display="block";
   $("t3").scrollIntoView({behavior:"smooth",block:"start"});
