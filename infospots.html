@@ -101,9 +101,52 @@ ol{padding-left:1.2rem;margin:.3rem 0 0}
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mi escena 360</title>
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+<script>
+AFRAME.registerComponent('modo-gafas', {
+  init: function () {
+    var sc = this.el, self = this, T = AFRAME.THREE;
+    this.on = false;
+    this.stereo = new T.StereoCamera();
+    this.stereo.aspect = 0.5;
+    this.size = new T.Vector2();
+    function setup() {
+      var bOn = document.getElementById('btn-gafas'), bOff = document.getElementById('btn-salir');
+      var r = sc.renderer, orig = r.render.bind(r);
+      function poner(v) {
+        self.on = v;
+        bOn.style.display = v ? 'none' : 'block';
+        bOff.style.display = v ? 'block' : 'none';
+        try {
+          if (v) { document.documentElement.requestFullscreen(); screen.orientation.lock('landscape'); }
+          else { screen.orientation.unlock(); if (document.fullscreenElement) { document.exitFullscreen(); } }
+        } catch (e) {}
+        if (!v) { r.getSize(self.size); r.setViewport(0, 0, self.size.x, self.size.y); }
+      }
+      bOn.onclick = function () { poner(true); };
+      bOff.onclick = function () { poner(false); };
+      r.render = function (scene, camera) {
+        if (!self.on) { return orig(scene, camera); }
+        scene.updateMatrixWorld();
+        if (camera.parent === null) { camera.updateMatrixWorld(); }
+        self.stereo.update(camera);
+        r.getSize(self.size);
+        var w = self.size.x / 2, h = self.size.y;
+        if (r.autoClear) { r.clear(); }
+        r.setScissorTest(true);
+        r.setScissor(0, 0, w, h); r.setViewport(0, 0, w, h); orig(scene, self.stereo.cameraL);
+        r.setScissor(w, 0, w, h); r.setViewport(w, 0, w, h); orig(scene, self.stereo.cameraR);
+        r.setScissorTest(false);
+      };
+    }
+    if (sc.hasLoaded) { setup(); } else { sc.addEventListener('loaded', setup); }
+  }
+});
+</script>
 </head>
 <body>
-<a-scene vr-mode-ui="enabled: true" loading-screen="enabled: false">
+<button id="btn-gafas" style="position:fixed;right:12px;bottom:12px;z-index:9999;padding:12px 16px;font:bold 16px sans-serif;border:0;border-radius:12px;background:#FFD23F;color:#000">Modo gafas</button>
+<button id="btn-salir" style="display:none;position:fixed;left:50%;bottom:8px;transform:translateX(-50%);z-index:9999;padding:8px 14px;font:bold 14px sans-serif;border:0;border-radius:10px;background:rgba(255,255,255,.55);color:#000">Salir</button>
+<a-scene modo-gafas xr-mode-ui="enabled: false" loading-screen="enabled: false">
   <a-sky src="fondo.jpg"></a-sky>
   <a-entity id="mundo"></a-entity>
   <a-entity camera look-controls position="0 1.6 0">
@@ -193,7 +236,7 @@ $("go").onclick=function(){
    +"PASO 2. Guiame para subir la carpeta mi-360 completa a Netlify Drop (https://app.netlify.com/drop), arrastrándola a la página.\n"
    +"PASO 3. Ayudame a copiar el link que me da Netlify y abrirlo en mi celular.\n"
    +"PASO 4. Explicame cómo probarlo: mirar un punto amarillo fijo durante unos 2 segundos para abrir su texto.\n"
-   +"PASO 5. Explicame cómo tocar el ícono de gafas de la pantalla, pasar a modo VR y poner el celular en el visor.\n"
+   +"PASO 5. Explicame cómo tocar el botón amarillo “Modo gafas” (la pantalla se divide en dos), poner el celular en horizontal y colocarlo en el visor. Para salir hay que sacar el celular y tocar “Salir”.\n"
    +"PASO 6. Si los puntos amarillos no coinciden con los elementos de mi imagen, ayudame a cambiar el valor de AZ_OFFSET (probando 0, 90 o 180) y a volver a subir la carpeta.";
   $("outP").value=p;$("res").style.display="block";
   $("t4").scrollIntoView({behavior:"smooth",block:"start"});
